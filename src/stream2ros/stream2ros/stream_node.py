@@ -14,7 +14,7 @@ class StreamNode(Node):
         super().__init__('stream_node')
         self.publisher_ = self.create_publisher(Image, '/image_raw', 10)
         self.bridge = CvBridge()
-        self.timer = self.create_timer(1.0 / 15, self.timer_callback)  # ~15 FPS
+        self.timer = self.create_timer(1.0 / 30, self.timer_callback)  # ~15 FPS
         self.frame_count = 0  # Counter for less verbose logging
 
         # Get stream URL from env var (adapted for Mac/Docker)

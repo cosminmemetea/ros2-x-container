@@ -1,11 +1,14 @@
-# ROS2‑MMX Container Boilerplate
+# ROS2‑X Container Boilerplate
 
+TLDR;
 A minimal, state‑of‑the‑art Dockerized ROS 2 setup that:
 
 - Pulls an MJPEG stream (e.g. from your Mac webcam via `mjpeg-streamer`)
 - Publishes it to `/image_raw` as a `sensor_msgs/Image`
 - Exposes a ROS 2 WebSocket on port 8765 for Foxglove Studio or other clients
 
+
+Dockerized ROS2 Humble setup for real-time webcam/MJPEG streaming to ROS2 topics, with seamless integration for visualization in Foxglove Studio. This pure-Python node uses OpenCV and cv_bridge to publish raw images on /image_raw, supporting easy extensions for AI/ML (e.g., edge detection, object detection with YOLO/Torch) and processing pipelines. Optimized for arm64 platforms like Mac M2 or NVIDIA Jetson (automotive/edge AI use cases), it includes foxglove_bridge for WebSocket-based monitoring. Ideal for prototyping vision systems in robotics, autonomous vehicles, or automotive perception—fork and extend for your CV/ML workflows!
 ---
 
 ## Architecture Overview
