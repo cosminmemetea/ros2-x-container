@@ -5,9 +5,9 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
-# Exemplu extensie: Adaugă procesare simplă (e.g., grayscale) sau ML (comentat)
+# Example extension: Add simple processing (e.g., grayscale) or ML (commented)
 # import torch
-# model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # Exemplu ML model pentru detecție (necesită pip install ultralytics în Dockerfile dacă activezi)
+# model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # Example ML model for detection (requires pip install ultralytics in Dockerfile if enabled)
 
 class StreamNode(Node):
     def __init__(self):
@@ -16,21 +16,26 @@ class StreamNode(Node):
         self.bridge = CvBridge()
         self.timer = self.create_timer(1.0 / 15, self.timer_callback)  # ~15 FPS
 
-        # Get stream URL from env var (adaptat pentru Mac/Docker)
+        # Get stream URL from env var (adapted for Mac/Docker)
         url = os.environ.get('STREAM_URL', 'http://host.docker.internal:8080/source_0')
         self.cap = cv2.VideoCapture(url)
-        if not self.cap.isOpened():
+        if self.cap.isOpened():
+            self.get_logger().info(f'Successfully opened stream at {url}')  # Confirmation message on open
+        else:
             self.get_logger().error(f'Failed to open stream at {url}')
             rclpy.shutdown()
 
     def timer_callback(self):
         ret, frame = self.cap.read()
         if ret:
-            # Exemplu procesare algoritm: Detect edges cu Canny
-            # edges = cv2.Canny(frame, 100, 200)
-            # frame = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)  # Convert back pentru publish
+            self.get_logger().info('Frame read successfully from stream')  # Message on each frame read (for debug; comment if too verbose)
+            # print('Frame read successfully')  # Alternative with print for direct console
 
-            # Exemplu ML: Predicții (comentat; activează și adaugă dependențe)
+            # Example algorithm processing: Detect edges with Canny
+            # edges = cv2.Canny(frame, 100, 200)
+            # frame = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)  # Convert back for publish
+
+            # Example ML: Predictions (commented; enable and add dependencies)
             # results = model(frame)
             # frame = results.render()[0]  # Render detections on frame
 
