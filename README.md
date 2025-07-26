@@ -78,11 +78,34 @@ docker build -t orin-container .
 
 ### 3. Run the container
 
+> **Note:** Ports are discarded in host mode; WebSocket will still listen on `8765`.
+### The correct command to make sure is working in FoxGlove is the following:
+
 ```bash
-docker run --rm -it   --network host   -e STREAM_URL=http://host.docker.internal:8080/source_0   -p 8765:8765   orin-container
+docker run --rm -it \
+  -e STREAM_URL=http://host.docker.internal:8080/source_0 \
+  -p 8765:8765 \
+  orin-container
+```
+To check the connection to the port exposed by the container:
+open a new terminal and type:
+ ```bash
+nc -zv localhost 876
 ```
 
-> **Note:** Ports are discarded in host mode; WebSocket will still listen on `8765`.
+For debugging one can try also the commands below:
+
+```bash
+docker run --rm -it --network host -e STREAM_URL=http://host.docker.internal:8080/source_0 -p 8765:8765 orin-container bash
+docker run --rm -it \
+  --network host \
+  -e STREAM_URL=http://host.docker.internal:8080/source_0 \
+  -p 8765:8765 \
+  orin-container
+```
+
+
+
 
 ---
 
