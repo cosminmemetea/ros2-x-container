@@ -176,5 +176,5 @@ ros2 topic hz /image_raw
 
 ## License & Contribution
 
-- **License:** Apache 2.0  
-- Feel free to fork, submit issues or PRs—this is intended as a community boilerplate!
+- License: MIT – Permissive open-source license allowing free use, modification, and distribution for any purpose, with minimal restrictions.
+- Contributions Welcome: Fork the repo, open issues for bugs/features, or submit PRs with clear descriptions and tests. This boilerplate is community-driven—help improve it for ROS2/AI enthusiasts!
