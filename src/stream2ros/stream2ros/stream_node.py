@@ -3,7 +3,7 @@ import cv2
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
-from cv_bridge import CvBridge
+from cv_bridge import CvBridge, CvBridgeError
 
 # Example extension: Add simple processing (e.g., grayscale) or ML (commented)
 # import torch
@@ -15,12 +15,13 @@ class StreamNode(Node):
         self.publisher_ = self.create_publisher(Image, '/image_raw', 10)
         self.bridge = CvBridge()
         self.timer = self.create_timer(1.0 / 15, self.timer_callback)  # ~15 FPS
+        self.frame_count = 0  # Counter for less verbose logging
 
         # Get stream URL from env var (adapted for Mac/Docker)
         url = os.environ.get('STREAM_URL', 'http://host.docker.internal:8080/source_0')
         self.cap = cv2.VideoCapture(url)
         if self.cap.isOpened():
-            self.get_logger().info(f'Successfully opened stream at {url}')  # Confirmation message on open
+            self.get_logger().info(f'Successfully opened stream at {url}')
         else:
             self.get_logger().error(f'Failed to open stream at {url}')
             rclpy.shutdown()
@@ -28,8 +29,12 @@ class StreamNode(Node):
     def timer_callback(self):
         ret, frame = self.cap.read()
         if ret:
-            self.get_logger().info('Frame read successfully from stream')  # Message on each frame read (for debug; comment if too verbose)
-            # print('Frame read successfully')  # Alternative with print for direct console
+            # Log frame details every 15 frames (~1/sec)
+            self.frame_count += 1
+            if self.frame_count % 15 == 0:
+                height, width = frame.shape[:2] if frame.ndim == 3 else (0, 0)
+                is_empty = frame.size == 0 or not frame.any()  # Check if frame is zero/empty
+                self.get_logger().info(f'Frame read: shape={frame.shape}, dtype={frame.dtype}, empty={is_empty}, count={self.frame_count}')
 
             # Example algorithm processing: Detect edges with Canny
             # edges = cv2.Canny(frame, 100, 200)
@@ -39,8 +44,13 @@ class StreamNode(Node):
             # results = model(frame)
             # frame = results.render()[0]  # Render detections on frame
 
-            img_msg = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
-            self.publisher_.publish(img_msg)
+            try:
+                img_msg = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
+                self.publisher_.publish(img_msg)
+                if self.frame_count % 15 == 0:
+                    self.get_logger().info(f'Published image: width={img_msg.width}, height={img_msg.height}, encoding={img_msg.encoding}')
+            except CvBridgeError as e:
+                self.get_logger().error(f'CvBridge error during conversion: {e}')
         else:
             self.get_logger().warn('Failed to read frame from stream')
 
