@@ -1,0 +1,63 @@
+# ========================
+# Workspace / build artifacts
+# ========================
+build/
+install/
+log/
+*.log
+*.bag
+*.pyc
+__pycache__/
+
+# ========================
+# ROS 2 & Colcon
+# ========================
+*.ws
+*.workspace
+.deps/
+_venv/
+
+# ========================
+# Editor / OS files
+# ========================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# ========================
+# Python / Pipenv / Poetry
+# ========================
+*.egg-info/
+.eggs/
+dist/
+pip-wheel-metadata/
+htmlcov/
+.coverage
+.coverage.*
+.pytest_cache/
+.env
+.env.*
+venv/
+ENV/
+env/
+
+# ========================
+# Docker
+# ========================
+*.pem
+docker-compose.override.yml
+docker-compose.*.yml
+**/Dockerfile.*
+!Dockerfile
+*.tar
+*.tar.gz
+*.tgz
+
+# ========================
+# Misc
+# ========================
+*.swp
+*~
