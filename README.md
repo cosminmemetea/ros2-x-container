@@ -89,6 +89,101 @@ docker run --rm -it \
 
 > *Note:* Ports are discarded in host mode; WebSocket will still listen on `8765`.
 
+```bash
+docker run --rm -it \
+  -e STREAM_URL=http://host.docker.internal:8080/source_0 \
+  -e FPS=15 \
+  -e CAMERA_TYPE=mjpeg \
+  -e ML_TYPE=yolo \
+  -e YOLO_MODEL=standard \
+  -e YOLO_CONFIDENCE=0.5 \
+  -p 8765:8765 \
+  orin-container-yolo
+```
+
+
+# Command Explanation
+
+The following command starts the container, pulls an MJPEG stream (e.g., from your Mac webcam via MJPEG‑streamer or Python script), optionally runs ML inference, and exposes a WebSocket for Foxglove Studio:
+
+```bash
+docker run --rm -it \
+  -e STREAM_URL=http://host.docker.internal:8080/source_0 \
+  -e FPS=30 \
+  -e CAMERA_TYPE=mjpeg \
+  -e ML_TYPE=yolo \
+  -e YOLO_MODEL=standard \
+  -e YOLO_CONFIDENCE=0.6 \
+  -p 8765:8765 \
+  orin-container-yolo
+```
+
+| Flag                                  | Description                                                                                                                       |
+|---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `--rm -it`                            | Remove container on exit and run interactively to view real‑time logs.                                                            |
+| `-e STREAM_URL=<url>`                 | Input stream URL (default `http://host.docker.internal:8080/source_0`). Can be MJPEG, RTSP, etc.                                  |
+| `-e FPS=<n>`                          | Frame rate for the internal timer (default 15). Increase to 30+ for smoother output, but watch hardware load.                     |
+| `-e CAMERA_TYPE=<type>`               | Select camera interface:
+: • `mjpeg` (default)
+: • `webcam`
+: • `csi` (Jetson MIPI)
+: • `itof`, `infra`, `custom_sensor`                                                        |
+| `-e ML_TYPE=<type>`                   | Enable ML pipeline:
+: • `none` (default)
+: • `yolo`
+: • `edge_detection`
+: • `custom_algo`                                                                            |
+| `-e YOLO_MODEL=<standard|tiny>`       | YOLO variant (requires downloaded models in `src/stream2ros/models`).                                                               |
+| `-e YOLO_CONFIDENCE=<0.0–1.0>`        | Detection threshold (lower → more detections; higher → more precise).                                                                |
+| `-p 8765:8765`                        | Map container’s WebSocket port `8765` to host (connect in Foxglove at `ws://localhost:8765`).                                      |
+| `orin-container-yolo`                 | Docker image name (replace with your tag if different).                                                                            |
+
+---
+
+## How Developers Should Use / Extend It
+
+1. **Basic Run** 
+   - Copy the command above, adjust `STREAM_URL` as needed, and run.
+   - In Foxglove Studio, add an **Image** panel subscribed to `/image_raw` (and `/annotated_image` if ML is enabled).
+
+2. **Add a New Camera Type**
+   - Create `extensions/sensors/your_camera.py` with:
+     ```python
+     def init():
+         return cv2.VideoCapture("your_source_url_or_device")
+     ```
+   - Rebuild: `docker build -t orin-container .`
+   - Run with `-e CAMERA_TYPE=your_camera`.
+
+3. **Add a New ML Algorithm**
+   - Create `extensions/algorithms/your_algo.py` with:
+     ```python
+     def init():
+         def processor(frame):
+             # your processing
+             return processed_frame
+         return processor
+     ```
+   - Rebuild and run with `-e ML_TYPE=your_algo`.
+
+4. **Multi‑Camera / Multi‑ML Pipelines**
+   - Extend the sensor/algorithm factories to return lists of capture/processor functions.
+   - Use a ROS 2 launch file to spin up multiple nodes in parallel.
+
+5. **Testing & Debugging**
+   - Rebuild after any code change:
+     ```bash
+     docker build -t orin-container .
+     ```
+   - Run with desired env vars and inspect logs/topics:
+     ```bash
+     ros2 topic list
+     ros2 topic hz /image_raw
+     ```
+
+By following this pattern, you can rapidly prototype and extend any vision‑based ROS 2 application on edge devices.
+
+
 ---
 
 ## Extensions: Enabling YOLOv3

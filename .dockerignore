@@ -18,3 +18,4 @@ venv
 .git
 .gitignore
 mjpeg_streamer.py
+download_yolo_models.sh
