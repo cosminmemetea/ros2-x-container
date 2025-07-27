@@ -1,4 +1,5 @@
 # ROS2‑X Container Boilerplate
+<img width="2320" height="1573" alt="ROS2-X-Container-Overview-Top" src="https://github.com/user-attachments/assets/c42fc63f-7b3a-463d-a1cb-5170c4da1a7e" />
 
 A minimal, state‑of‑the‑art Dockerized ROS 2 setup for real‑time webcam/MJPEG streaming to ROS 2 topics, with seamless integration in Foxglove Studio. This pure-Python node uses OpenCV and cv_bridge to publish raw and annotated images on `/image_raw` and `/annotated_image`, supporting easy extensions for AI/ML (e.g., edge detection, object detection with YOLO/Torch) and processing pipelines. Optimized for arm64 platforms like Mac M2 or NVIDIA Jetson (automotive/edge AI use cases), it includes foxglove_bridge for WebSocket-based monitoring. Ideal for prototyping vision systems in robotics, autonomous vehicles, or automotive perception—fork and extend for your CV/ML workflows!
 
@@ -265,6 +266,8 @@ ros2 topic hz /image_raw
 
 ## Troubleshooting
 
+- **Project Structure**
+- <img width="357" height="659" alt="Screenshot 2025-07-27 at 17 51 58" src="https://github.com/user-attachments/assets/963f23c7-f275-4ab7-b99f-1c151946e359" />
 - **Empty frames (`shape=(0,0)`)**  
   - Grant Terminal camera permission on macOS: *System Settings → Privacy & Security → Camera*  
   - Verify `http://localhost:8080/source_0` shows video.
