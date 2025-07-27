@@ -1,15 +1,15 @@
 # ROS2‑X Container Boilerplate
 
-TLDR;
-A minimal, state‑of‑the‑art Dockerized ROS 2 setup that:
+A minimal, state‑of‑the‑art Dockerized ROS 2 setup for real‑time webcam/MJPEG streaming to ROS 2 topics, with seamless integration in Foxglove Studio. This pure-Python node uses OpenCV and cv_bridge to publish raw and annotated images on `/image_raw` and `/annotated_image`, supporting easy extensions for AI/ML (e.g., edge detection, object detection with YOLO/Torch) and processing pipelines. Optimized for arm64 platforms like Mac M2 or NVIDIA Jetson (automotive/edge AI use cases), it includes foxglove_bridge for WebSocket-based monitoring. Ideal for prototyping vision systems in robotics, autonomous vehicles, or automotive perception—fork and extend for your CV/ML workflows!
 
-- Pulls an MJPEG stream (e.g. from your Mac webcam via `mjpeg-streamer`)
-- Publishes it to `/image_raw` as a `sensor_msgs/Image`
-- Exposes a ROS 2 WebSocket on port 8765 for Foxglove Studio or other clients
+---
 
+## TL;DR
 
-
-Dockerized ROS2 Humble setup for real-time webcam/MJPEG streaming to ROS2 topics, with seamless integration for visualization in Foxglove Studio. This pure-Python node uses OpenCV and cv_bridge to publish raw images on /image_raw, supporting easy extensions for AI/ML (e.g., edge detection, object detection with YOLO/Torch) and processing pipelines. Optimized for arm64 platforms like Mac M2 or NVIDIA Jetson (automotive/edge AI use cases), it includes foxglove_bridge for WebSocket-based monitoring. Ideal for prototyping vision systems in robotics, autonomous vehicles, or automotive perception—fork and extend for your CV/ML workflows!
+- **Pulls an MJPEG stream** (from `mjpeg-streamer` or provided Python script)
+- **Publishes** to `/image_raw` and `/annotated_image` as `sensor_msgs/Image`
+- **Exposes** a ROS 2 WebSocket on port 8765 for Foxglove Studio
+- **Supports** YOLOv3/Tiny detection via env vars for object detection demos
 
 ---
 
@@ -24,7 +24,7 @@ Dockerized ROS2 Humble setup for real-time webcam/MJPEG streaming to ROS2 topics
       │                         └── ML Model Service (/inference)
       │
       │
-┌─────▼──────┐ 
+┌─────▼──────┐
 │ Sync Node  │ ← combine multi‑stream / time‑align
 └────────────┘
 ```
@@ -33,9 +33,9 @@ Dockerized ROS2 Humble setup for real-time webcam/MJPEG streaming to ROS2 topics
 
 ## Prerequisites
 
-1. **macOS host** with webcam & [`mjpeg-streamer`](https://github.com/jacksonliam/mjpg-streamer) installed  
+1. **macOS host** with webcam & [`mjpeg-streamer`](https://github.com/jacksonliam/mjpg-streamer) or Python 3  
 2. **Docker** (with host network support)  
-3. **ROS 2 Humble** base image (pulled automatically)  
+3. **ROS 2 Humble** base image (pulled automatically by Docker)
 
 ---
 
@@ -44,62 +44,40 @@ Dockerized ROS2 Humble setup for real-time webcam/MJPEG streaming to ROS2 topics
 ### 1. Start your MJPEG stream on macOS
 
 ```bash
-mjpeg-streamer   --source 0   --fps 15   --quality 80   --port 8080
+mjpeg-streamer --source 0 --fps 15 --quality 80 --port 8080
 ```
 
-Verify in browser:  
-```
-http://localhost:8080/source_0
-```
-As an alternative you can run mjpeg_streamer.py script provided. Make sure 
+Verify in browser: `http://localhost:8080/source_0`
 
-
-### 1.1 (Alternative) Run the provided Python streamer
-
-Create & activate a virtual environment
+#### 1.1 Alternative: Python MJPEG Streamer
 
 ```bash
+# Create & activate virtual environment
 python3 -m venv venv
 source venv/bin/activate
-```
 
-Install dependencies
-
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
 
-Run the streamer
-
-```bash
+# Run the Python streamer
 python mjpeg_streamer.py
 ```
+
+---
 
 ### 2. Build the Docker image
 
 ```bash
-docker build -t orin-container .
+docker build -t orin-container-yolo .
 ```
+
+---
 
 ### 3. Run the container
 
-> **Note:** Ports are discarded in host mode; WebSocket will still listen on `8765`.
-### The correct command to make sure is working in FoxGlove is the following:
+Use the following command for correct connection to Foxglove Studio:
 
 ```bash
-docker run --rm -it \
-  -e STREAM_URL=http://host.docker.internal:8080/source_0 \
-  -p 8765:8765 \
-  orin-container
-```
-```bash
-docker run --rm -it \
-  -e STREAM_URL=http://host.docker.internal:8080/source_0 \
-  -e YOLO_MODEL=standard \
-  -e YOLO_CONFIDENCE=0.6 \
-  -p 8765:8765 \
-  orin-container-yolo
-```
 docker run --rm -it \
   -e STREAM_URL=http://host.docker.internal:8080/source_0 \
   -e FPS=30 \
@@ -109,11 +87,13 @@ docker run --rm -it \
   orin-container-yolo
 ```
 
-*** Extensions: Enabling YOLOv3 ***
+> *Note:* Ports are discarded in host mode; WebSocket will still listen on `8765`.
 
-For object detection, download YOLOv3 models (developed by Joseph Redmon and the Darknet community) before building:
+---
 
-Run this script (or manually via curl) in project root:
+## Extensions: Enabling YOLOv3
+
+Download YOLOv3 models into `src/stream2ros/models`:
 
 ```bash
 #!/bin/bash
@@ -131,26 +111,18 @@ curl -O https://pjreddie.com/media/files/yolov3-tiny.weights
 echo "Downloading COCO classes..."
 curl -O https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names
 
-echo "Downloads complete. Ready to build Docker image."
+echo "Downloads complete. Rebuild the Docker image."
 ```
 
-To check the connection to the port exposed by the container:
-open a new terminal and type:
- ```bash
-nc -zv localhost 876
-```
+---
 
-For debugging one can try also the commands below:
+## Connectivity Test
 
 ```bash
-docker run --rm -it --network host -e STREAM_URL=http://host.docker.internal:8080/source_0 -p 8765:8765 orin-container bash
-docker run --rm -it \
-  --network host \
-  -e STREAM_URL=http://host.docker.internal:8080/source_0 \
-  -p 8765:8765 \
-  orin-container
+nc -zv localhost 8765
 ```
 
+---
 
 
 
@@ -158,61 +130,56 @@ docker run --rm -it \
 
 ## Developing & Debugging
 
-### Enter the container shell
+
+**Outside container:**
+In a new terminal execute the following commands:
 
 ```bash
+# Enter container shell
 docker ps
 docker exec -it <container_id> bash
+
+# Re-run with bash
+docker run --rm -it --network host -e STREAM_URL=http://host.docker.internal:8080/source_0 -p 8765:8765 orin-container-yolo bash
 ```
 
-### Source your ROS 2 environments (if needed)
-
-Terminal with root@docker-desktop:~/ros2_ws# should appear and type the commands below:
+**Inside container:**
 
 ```bash
+# Source environments
 source /opt/ros/humble/setup.bash
 source /workspace/install/setup.bash
-```
 
-### Launch the bridge and stream node manually
-
-```bash
+# Launch foxglove bridge & stream node
 ros2 run rosbridge_server rosbridge_websocket --port 8765 &
 ros2 run stream2ros stream_reader
-```
 
-### Inspect topics
-
-```bash
+# List topics
 ros2 topic list
 # /image_raw
+# /annotated_image
 # /parameter_events
 # /rosout
-```
 
-### Check publish rate
-
-```bash
+# Check publish rate
 ros2 topic hz /image_raw
-# Expect ~15 Hz
+# Expect ~15 Hz (or FPS value set by -e FPS)
 ```
 
 ---
 
 ## Troubleshooting
 
-- **Frames empty / `shape=(0,0)`**  
-  - Ensure macOS has granted **Camera** permission to Terminal (System Settings ▶ Privacy ▶ Camera).  
-  - Verify the MJPEG stream in your browser (`http://localhost:8080/source_0`).  
-- **Rate is 0 Hz**  
-  - Add logging in `stream_reader.py`:  
-    ```python
-    fps = self.cap.get(cv2.CAP_PROP_FPS)
-    self.get_logger().info(f"Stream FPS report: {fps}")
-    ```
-- **“Package ‘stream2ros’ not found”**  
-  - Confirm you rebuilt after copying your `src/stream2ros` folder into the image.  
-  - Re-run `docker build -t orin-container .` before `docker run`.
+- **Empty frames (`shape=(0,0)`)**  
+  - Grant Terminal camera permission on macOS: *System Settings → Privacy & Security → Camera*  
+  - Verify `http://localhost:8080/source_0` shows video.
+
+- **0 Hz publish rate**  
+  - Add logging in `stream_reader.py` for `cap.get(cv2.CAP_PROP_FPS)` and errors.
+
+- **“Package 'stream2ros' not found”**  
+  - Ensure you rebuilt Docker after adding `src/stream2ros`  
+  - Re-run `docker build ...` before `docker run`.
 
 ---
 
