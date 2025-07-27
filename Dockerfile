@@ -24,6 +24,7 @@ SHELL ["/bin/bash", "-lc"]
 # 4. Copy code, install dependencies with rosdep (skip ament_python since no rosdep key), then build with colcon
 WORKDIR /root/ros2_ws
 COPY src ./src
+COPY src/stream2ros/models /root/ros2_ws/src/stream2ros/models
 RUN rosdep install -i --from-path src --rosdistro humble -y --skip-keys ament_python
 RUN source /opt/ros/humble/setup.bash && \
     colcon build --symlink-install

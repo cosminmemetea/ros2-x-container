@@ -92,6 +92,48 @@ docker run --rm -it \
   -p 8765:8765 \
   orin-container
 ```
+```bash
+docker run --rm -it \
+  -e STREAM_URL=http://host.docker.internal:8080/source_0 \
+  -e YOLO_MODEL=standard \
+  -e YOLO_CONFIDENCE=0.6 \
+  -p 8765:8765 \
+  orin-container-yolo
+```
+docker run --rm -it \
+  -e STREAM_URL=http://host.docker.internal:8080/source_0 \
+  -e FPS=30 \
+  -e YOLO_MODEL=standard \
+  -e YOLO_CONFIDENCE=0.6 \
+  -p 8765:8765 \
+  orin-container-yolo
+```
+
+*** Extensions: Enabling YOLOv3 ***
+
+For object detection, download YOLOv3 models (developed by Joseph Redmon and the Darknet community) before building:
+
+Run this script (or manually via curl) in project root:
+
+```bash
+#!/bin/bash
+mkdir -p src/stream2ros/models
+cd src/stream2ros/models
+
+echo "Downloading YOLOv3 Standard..."
+curl -O https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg
+curl -O https://pjreddie.com/media/files/yolov3.weights
+
+echo "Downloading YOLOv3 Tiny..."
+curl -O https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3-tiny.cfg
+curl -O https://pjreddie.com/media/files/yolov3-tiny.weights
+
+echo "Downloading COCO classes..."
+curl -O https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names
+
+echo "Downloads complete. Ready to build Docker image."
+```
+
 To check the connection to the port exposed by the container:
 open a new terminal and type:
  ```bash
@@ -173,6 +215,22 @@ ros2 topic hz /image_raw
   - Re-run `docker build -t orin-container .` before `docker run`.
 
 ---
+
+## Credits & References
+
+This project builds on open-source tools and models from the community. We ethically acknowledge and credit the original creators:
+
+- **ROS2 Humble**: Core robotics framework. Developed by Open Robotics. [Official Site](https://docs.ros.org/en/humble/) (Apache 2.0 License).
+- **OpenCV**: Computer vision library used for frame capture and processing. Developed by Intel and contributors. [Official Site](https://opencv.org/) (Apache 2.0 License).
+- **cv_bridge**: ROS2 bridge for OpenCV images. Part of ROS2 vision_opencv package. [Official Repo](https://github.com/ros-perception/vision_opencv) (BSD License).
+- **foxglove_bridge**: WebSocket bridge for Foxglove Studio visualization. Developed by Foxglove. [Official Repo](https://github.com/foxglove/ros-foxglove-bridge) (Apache 2.0 License).
+- **YOLOv3 & YOLOv3-Tiny Models**: Object detection models used for extensions. Developed by Joseph Redmon and the Darknet community. [Original Darknet Repo](https://github.com/pjreddie/darknet) (Public Domain/YOLO License). Weights and configs downloaded from [pjreddie.com](https://pjreddie.com/darknet/yolo/).
+- **MJPEG Streamer**: Webcam streaming tool (alternative Python script provided). Original by jacksonliam. [Repo](https://github.com/jacksonliam/mjpg-streamer) (GPL-2.0 License).
+- **Docker**: Containerization platform. Developed by Docker Inc. [Official Site](https://www.docker.com/) (Apache 2.0 License).
+
+All external assets (e.g., YOLO models) are referenced with download scripts to respect original sources. If redistributing, comply with their licenses. This project is under MIT License—see [LICENSE](LICENSE) for details.
+
+Ethical Note: YOLO models may have applications in sensitive areas (e.g., surveillance); use responsibly and consider biases in training data (COCO dataset).
 
 ## License & Contribution
 

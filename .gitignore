@@ -61,3 +61,12 @@ docker-compose.*.yml
 # ========================
 *.swp
 *~
+
+# ========================
+# ML Models
+# ========================
+src/stream2ros/models/coco.names
+src/stream2ros/models/yolov3-tiny.cfg
+src/stream2ros/models/yolov3-tiny.weights
+src/stream2ros/models/yolov3.cfg
+src/stream2ros/models/yolov3.weights
