@@ -1,5 +1,4 @@
 # ROS2‑X Container Boilerplate
-<img width="2320" height="1573" alt="ROS2-X-Container-Overview-Top" src="https://github.com/user-attachments/assets/c42fc63f-7b3a-463d-a1cb-5170c4da1a7e" />
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![ROS Humble](https://img.shields.io/badge/ROS-Humble-blue?logo=ros)](https://docs.ros.org/en/humble/)
@@ -8,13 +7,14 @@
 [![GitHub Forks](https://img.shields.io/github/forks/cosminmemetea/ros2-x-container)](https://github.com/cosminmemetea/ros2-x-container/network)
 [![GitHub Issues](https://img.shields.io/github/issues/cosminmemetea/ros2-x-container)](https://github.com/cosminmemetea/ros2-x-container/issues)
 
-
 ## TL;DR
 
 - **Pulls an MJPEG stream** (from `mjpeg-streamer` or provided Python script)
 - **Publishes** to `/image_raw` and `/annotated_image` as `sensor_msgs/Image`
 - **Exposes** a ROS 2 WebSocket on port 8765 for Foxglove Studio
 - **Supports** YOLOv3/Tiny detection via env vars for object detection demos
+
+<img width="2320" height="1573" alt="ROS2-X-Container-Overview-Top" src="https://github.com/user-attachments/assets/c42fc63f-7b3a-463d-a1cb-5170c4da1a7e" />
 
 ---
 
