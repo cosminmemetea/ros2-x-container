@@ -1,4 +1,5 @@
 # ROS2‑X Container Boilerplate
+<img width="2320" height="1573" alt="ROS2-X-Container-Overview-Top" src="https://github.com/user-attachments/assets/c42fc63f-7b3a-463d-a1cb-5170c4da1a7e" />
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![ROS Humble](https://img.shields.io/badge/ROS-Humble-blue?logo=ros)](https://docs.ros.org/en/humble/)
@@ -276,6 +277,8 @@ ros2 topic hz /image_raw
 
 ## Troubleshooting
 
+- **Project Structure**
+- <img width="357" height="659" alt="Screenshot 2025-07-27 at 17 51 58" src="https://github.com/user-attachments/assets/963f23c7-f275-4ab7-b99f-1c151946e359" />
 - **Empty frames (`shape=(0,0)`)**  
   - Grant Terminal camera permission on macOS: *System Settings → Privacy & Security → Camera*  
   - Verify `http://localhost:8080/source_0` shows video.
