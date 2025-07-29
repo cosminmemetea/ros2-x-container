@@ -1,8 +1,12 @@
 # ROS2‑X Container Boilerplate
 
-A minimal, state‑of‑the‑art Dockerized ROS 2 setup for real‑time webcam/MJPEG streaming to ROS 2 topics, with seamless integration in Foxglove Studio. This pure-Python node uses OpenCV and cv_bridge to publish raw and annotated images on `/image_raw` and `/annotated_image`, supporting easy extensions for AI/ML (e.g., edge detection, object detection with YOLO/Torch) and processing pipelines. Optimized for arm64 platforms like Mac M2 or NVIDIA Jetson (automotive/edge AI use cases), it includes foxglove_bridge for WebSocket-based monitoring. Ideal for prototyping vision systems in robotics, autonomous vehicles, or automotive perception—fork and extend for your CV/ML workflows!
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![ROS Humble](https://img.shields.io/badge/ROS-Humble-blue?logo=ros)](https://docs.ros.org/en/humble/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/cosminmemetea/orin-container.svg)](https://hub.docker.com/r/mmex/ros2-x-container)
+[![GitHub Stars](https://img.shields.io/github/stars/cosminmemetea/ros2-x-container)](https://github.com/cosminmemetea/ros2-x-container/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/cosminmemetea/ros2-x-container)](https://github.com/cosminmemetea/ros2-x-container/network)
+[![GitHub Issues](https://img.shields.io/github/issues/cosminmemetea/ros2-x-container)](https://github.com/cosminmemetea/ros2-x-container/issues)
 
----
 
 ## TL;DR
 
@@ -12,6 +16,13 @@ A minimal, state‑of‑the‑art Dockerized ROS 2 setup for real‑time webca
 - **Supports** YOLOv3/Tiny detection via env vars for object detection demos
 
 ---
+
+## About
+
+A minimal Dockerized ROS 2 setup for real‑time webcam/MJPEG streaming to ROS 2 topics, with seamless integration in Foxglove Studio. This pure-Python node uses OpenCV and cv_bridge to publish raw and annotated images on `/image_raw` and `/annotated_image`, supporting easy extensions for AI/ML (e.g., edge detection, object detection with YOLO/Torch) and processing pipelines. Optimized for arm64 platforms like Mac M2 or NVIDIA Jetson (automotive/edge AI use cases), it includes foxglove_bridge for WebSocket-based monitoring. Ideal for prototyping vision systems in robotics, autonomous vehicles, or automotive perception—fork and extend for your CV/ML workflows!
+
+---
+
 
 ## Architecture Overview
 
@@ -294,7 +305,19 @@ All external assets (e.g., YOLO models) are referenced with download scripts to 
 
 Ethical Note: YOLO models may have applications in sensitive areas (e.g., surveillance); use responsibly and consider biases in training data (COCO dataset).
 
-## License & Contribution
+## License
 
 - License: MIT – Permissive open-source license allowing free use, modification, and distribution for any purpose, with minimal restrictions.
-- Contributions Welcome: Fork the repo, open issues for bugs/features, or submit PRs with clear descriptions and tests. This boilerplate is community-driven—help improve it for ROS2/AI enthusiasts!
+
+## Contributing
+
+Contributions make this boilerplate better! Whether fixing bugs, adding sensors/ML stubs, or improving docs, you're welcome.
+
+1. **Fork & Clone**: Fork the repo, clone locally.
+2. **Branch**: Create a feature branch (e.g., `git checkout -b feat/new-sensor`).
+3. **Develop**: Follow PEP8 for Python; add tests if changing code.
+4. **Test**: Rebuild Docker, run with your changes, verify in Foxglove.
+5. **PR**: Push branch, open PR with clear title/description (e.g., "Add LiDAR sensor stub").
+6. **Issues**: Use labels (bug, enhancement); provide repro steps/screenshots.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details. Follow the [Code of Conduct](CODE_OF_CONDUCT.md).
