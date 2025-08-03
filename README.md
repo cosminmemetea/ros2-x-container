@@ -25,11 +25,11 @@ A minimal Dockerized ROS 2 setup for real‑time webcam/MJPEG streaming to ROS
 ---
 
 
-## Architecture Overview
+## Proposed Architecture Overview
 
 ```text
 ┌──────────────┐          ┌───────────────┐          ┌─────────────────┐
-│ Sensor Node  │──image→──│ ML Processor  │──annot→──│ Qt Visualizer   │
+│ Sensor Node  │──image→──│ ML Processor  │──annot→──│  Visualizer     │
 │ (/camera_*)  │          │ (/detection)  │          │ (C++, QML, ROS) │
 └─────┬────────┘          └─────┬─────────┘          └─────────────────┘
       │                         │
@@ -152,7 +152,7 @@ docker run --rm -it \
 
 ---
 
-## How Developers Should Use / Extend It
+## Use / Extend It (Proposal)
 
 1. **Basic Run** 
    - Copy the command above, adjust `STREAM_URL` as needed, and run.
