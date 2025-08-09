@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![ROS Humble](https://img.shields.io/badge/ROS-Humble-blue?logo=ros)](https://docs.ros.org/en/humble/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/cosminmemetea/orin-container.svg)](https://hub.docker.com/r/mmex/ros2-x-container)
+[![Docker Pulls](https://img.shields.io/docker/pulls/mmex/ros2-x-container.svg)](https://hub.docker.com/r/mmex/ros2-x-container)
 [![GitHub Stars](https://img.shields.io/github/stars/cosminmemetea/ros2-x-container)](https://github.com/cosminmemetea/ros2-x-container/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/cosminmemetea/ros2-x-container)](https://github.com/cosminmemetea/ros2-x-container/network)
 [![GitHub Issues](https://img.shields.io/github/issues/cosminmemetea/ros2-x-container)](https://github.com/cosminmemetea/ros2-x-container/issues)
@@ -83,6 +83,10 @@ python mjpeg_streamer.py
 docker build -t orin-container-yolo .
 ```
 
+Or better pull it:
+```bash
+docker pull mmex/ros2-x-container:latest
+```
 ---
 
 ### 3. Run the container
@@ -113,6 +117,20 @@ docker run --rm -it \
   orin-container-yolo
 ```
 
+Tested on Orin Jetson Nano wtih Arducam 4K 8MP IMX219 Autofocus USB Camera
+
+```bash
+docker run --rm -it \
+  --add-host=host.docker.internal:host-gateway \
+  -e STREAM_URL=http://host.docker.internal:8080/source_0 \
+  -e FPS=15 \
+  -e CAMERA_TYPE=mjpeg \
+  -e ML_TYPE=yolo \
+  -e YOLO_MODEL=standard \
+  -e YOLO_CONFIDENCE=0.5 \
+  -p 8765:8765 \
+  mmex/ros2-x-container:latest
+```
 
 # Command Explanation
 
